@@ -1,0 +1,9 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap');
+
+.App{
+    min-height: 100vh;
+    display: flex;
+    background-image: url("https://plus.unsplash.com/premium_photo-1684761949804-fd8eb9a5b6cc?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxjb2xsZWN0aW9uLXBhZ2V8MXxJUXpwQXJSQ0dORXx8ZW58MHx8fHx8");
+    background-size: cover;
+    background-position: center;
+}
