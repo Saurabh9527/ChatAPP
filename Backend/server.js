@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import colors from "colors";
 import db from './config/db.js'
+import userRoute from './routes/userRoute.js';
 
 const app = express();
 dotenv.config();
@@ -20,15 +21,7 @@ app.get("/", (req, res) => {
   res.send("Hello i am good");
 });
 
-app.get("/api/chats", (req, res) => {
-  res.send(chats);
-});
-
-app.get("/api/chats/:id", (req, res) => {
-  console.log(req.params.id);
-  const findChats = chats.find((chatId) => chatId._id === req.params.id);
-  res.send(findChats);
-});
+app.use('/api/user', userRoute);
 
 const port = process.env.PORT || 8080;
 app.listen(port, (req, res) => {
