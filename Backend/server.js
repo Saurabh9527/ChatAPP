@@ -2,12 +2,14 @@ import express from "express";
 import { chats } from "./Data/data.js";
 import dotenv from "dotenv";
 import cors from "cors";
+import bodyParser from 'body-parser';
 import colors from "colors";
 import db from './config/db.js'
 import userRoute from './routes/userRoute.js';
 
 const app = express();
 dotenv.config();
+app.use(bodyParser.json());
 
 const corsOptions = {
   origin: "http://localhost:5173",
@@ -16,6 +18,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+
 
 app.get("/", (req, res) => {
   res.send("Hello i am good");
