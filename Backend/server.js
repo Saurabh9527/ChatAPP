@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import colors from "colors";
 import db from './config/db.js'
 import userRoute from './routes/userRoute.js';
+import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 const app = express();
 dotenv.config();
@@ -25,6 +26,9 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/user', userRoute);
+
+app.use(notFound);
+app.use(errorHandler);
 
 const port = process.env.PORT || 8080;
 app.listen(port, (req, res) => {

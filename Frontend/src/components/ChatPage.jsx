@@ -1,7 +1,7 @@
 
 import React, { useEffect, useState } from 'react'
-import { BACKEND_URL } from '../utils/constant';
 import axios from 'axios';
+import { BACKEND_URL } from '../utils/constant';
 
 const ChatPage = () => {
 
