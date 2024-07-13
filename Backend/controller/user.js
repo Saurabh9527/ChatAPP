@@ -78,3 +78,21 @@ export const Login = asyncHandler (async(req, res)=>{
         throw new Error("failed to create the User");
     }
 });
+
+// *get all users, when user search 1st)option is POSt request and send data 2nd) is using querys string we use 2nd option
+//~ /api/user?search=saurabh
+
+export const AllUsers = asyncHandler( async (req, res) => {
+    const keyword = req.query.search ? {
+        $or: [
+            { name: {$regex: req.query.search, $options : "i"}},
+            { email: {$regex : req.query.search, $options: "i"}},
+        ]
+    }
+    : 
+    {};
+
+    //console.log("req user data :- "+JSON.stringify(req.user));
+    const users = await User.find(keyword).find({_id: {$ne: req.user._id}}); //*Find users matching the keyword expect current logged-in user
+    res.send(users);
+});
