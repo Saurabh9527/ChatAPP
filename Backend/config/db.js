@@ -13,15 +13,15 @@ mongoose.connect(mongoURL);
 const db = mongoose.connection;
 
 db.on('connected' , ()=>{
-    console.log("Database connected".cyan.underline);
+    console.log("Database connected");
 })
 
 db.on('disconnected' , ()=>{
-    console.log("Database disconnected" .red.bold);
+    console.log("Database disconnected");
 })
 
 db.on('error' , (err)=>{
-    console.log("MongoDb connection error" , err. red.bold);
+    console.log("MongoDb connection error" , err);
 })
 
 export default db;

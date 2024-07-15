@@ -6,6 +6,7 @@ import bodyParser from 'body-parser';
 import colors from "colors";
 import db from './config/db.js'
 import userRoute from './routes/userRoute.js';
+import chatRoute from './routes/chatRoute.js';
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 
 const app = express();
@@ -26,6 +27,7 @@ app.get("/", (req, res) => {
 });
 
 app.use('/api/user', userRoute);
+app.use('/api/chat', chatRoute);
 
 app.use(notFound);
 app.use(errorHandler);

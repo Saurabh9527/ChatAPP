@@ -3,7 +3,7 @@ import { generateToken } from '../config/jwt.js';
 import User from '../models/userModel.js';
 import asyncHandler from 'express-async-handler';
 
-export const Signup = asyncHandler (async(req, res)=>{
+export const signup = asyncHandler (async(req, res)=>{
     const {name, email, password, avatar}= req.body;
 
     if(!name || !email || !password){
@@ -46,7 +46,7 @@ export const Signup = asyncHandler (async(req, res)=>{
     }
 });
 
-export const Login = asyncHandler (async(req, res)=>{
+export const login = asyncHandler (async(req, res)=>{
 
     const {email, password}= req.body;
     if( !email || !password){
@@ -82,7 +82,7 @@ export const Login = asyncHandler (async(req, res)=>{
 // *get all users, when user search 1st)option is POSt request and send data 2nd) is using querys string we use 2nd option
 //~ /api/user?search=saurabh
 
-export const AllUsers = asyncHandler( async (req, res) => {
+export const allUsers = asyncHandler( async (req, res) => {
     const keyword = req.query.search ? {
         $or: [
             { name: {$regex: req.query.search, $options : "i"}},

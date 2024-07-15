@@ -1,10 +1,10 @@
 
 import express from 'express';
-import { AllUsers, Login, Signup } from '../controller/user.js';
+import { allUsers, login, signup } from '../controller/user.js';
 import { jwtAuthMiddleware } from '../middleware/jwtAuthMiddleware.js';
 const router = express.Router();
 
-router.route('/signup').post(Signup);
-router.route('/login').post(Login);
-router.route('/').get(jwtAuthMiddleware,AllUsers);
+router.route('/signup').post(signup);
+router.route('/login').post(login);
+router.route('/').get(jwtAuthMiddleware , allUsers);
 export default router;
