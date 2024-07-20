@@ -1,32 +1,21 @@
 
 import { Button } from '@chakra-ui/react'
 import React from 'react';
-import { createBrowserRouter, RouterProvider, Route } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import './App.css'
-import Home from './components/Home.jsx';
-import ChatPage from './components/ChatPage.jsx';
+import HomePage from './Pages/HomePage.jsx';
+import ChatPage from './Pages/ChatPage.jsx';
 import Error from './components/Error.jsx';
 
 const App = () => {
 
-  const router = createBrowserRouter([
-    {
-      path: '/',
-      element: <Home />,
-    },
-    {
-      path: '/chats',
-      element: <ChatPage />,
-    },
-    {
-      path: '*',
-      element: <Error />,
-    },
-  ]);
-
   return (
     <div className='App'>
-    <RouterProvider router={router} />
+      <Routes>
+        <Route path='/' element={<HomePage />}/>
+        <Route path='/chats' element={<ChatPage />}/>
+        <Route path='*' element={<Error />}/>
+      </Routes>
     </div>
   )
 }

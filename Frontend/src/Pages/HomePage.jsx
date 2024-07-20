@@ -1,11 +1,25 @@
 
-import React from 'react'
-import { Container, Box, Text ,  Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
-import {  } from '@chakra-ui/react'
-import Login from './Login'
-import Signup from './Signup'
+import React, { useEffect } from 'react'
+import { Container, Box, Text, Tabs, TabList, TabPanels, Tab, TabPanel } from '@chakra-ui/react'
+import Login from '../components/Login.jsx'
+import Signup from '../components/Signup.jsx'
+import { useNavigate } from 'react-router-dom'
 
-const Home = () => {
+const HomePage = () => {
+
+  const navigate = useNavigate();
+
+  useEffect(() => {
+
+    const user = JSON.parse(localStorage.getItem('userInfo'));
+
+    if (user) {
+      navigate('/chats');
+    };
+
+  }, [navigate]);
+
+
   return (
     <Container maxW='xl' centerContent>
       <Box
@@ -40,4 +54,4 @@ const Home = () => {
   )
 }
 
-export default Home
+export default HomePage;
