@@ -7,8 +7,9 @@ import { BACKEND_URL } from '../../utils/constant';
 import { AddIcon } from '@chakra-ui/icons';
 import ChatLoading from '../ChatLoading';
 import { getSender } from '../../utils/ChatLogics';
+import GroupChatModal from '../GroupChatModal';
 
-const MyChats = () => {
+const MyChats = ( { fetchAgain  } ) => {
 
   const [loggedUser, setLoggedUser] = useState();
   const { user, selectedChat, setSelectedChat, chats, setChats } = useContext(ChatContext);
@@ -27,7 +28,7 @@ const MyChats = () => {
           },
         });
       const { data } = res;
-      console.log(data);
+      //console.log(data);
       setChats(data)
     } catch (error) {
       console.log(error);
@@ -45,7 +46,7 @@ const MyChats = () => {
   useEffect(() => {
     setLoggedUser(JSON.parse(localStorage.getItem("userInfo")));
     fetchChat();
-  }, [])
+  }, [fetchAgain])
 
   return (
     <Box
@@ -69,12 +70,14 @@ const MyChats = () => {
         alignItems={"center"}
       >
         My Chats
+        <GroupChatModal>
         <Button
           display={"flex"}
           fontSize={{ base: "17px", md: "10px", lg: "17px" }}
           rightIcon={<AddIcon />}>
           New Group Chat
         </Button>
+        </GroupChatModal>
       </Box>
 
       <Box
@@ -106,7 +109,7 @@ const MyChats = () => {
                     ?
                     (getSender(loggedUser?.data, chat?.users))
                     :
-                    (chat?.chatname)
+                    (chat?.chatName)
                   }
                 </Text>
               </Box>
