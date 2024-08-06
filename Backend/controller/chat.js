@@ -77,7 +77,7 @@ export const createGroupChat = asyncHandler (async (req, res)=>{
    if(users.length<2){
       return res
       .status(400)
-      .send("Moe than 2 users are required to form a group chat");
+      .send("More than 2 users are required to form a group chat");
    }
 
    users.push(req.user); //cureent login user also push in group chat
@@ -87,7 +87,7 @@ export const createGroupChat = asyncHandler (async (req, res)=>{
             chatName: req.body.name,
             users: users,
             isGroupChat: true,
-            groupChat: req.user,
+            groupAdmin: req.user,
          });
 
          const fullGroupChat = await Chat.findOne({_id: groupChat.id})

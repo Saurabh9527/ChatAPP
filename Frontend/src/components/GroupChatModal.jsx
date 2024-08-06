@@ -89,7 +89,8 @@ const GroupChatModal = ( {children} ) => {
                   },
                 });
 
-                const { data } = res;   
+                const { data } = res; 
+                console.log(res);    
                 setChats([data, ...chats]);
                 onClose()
                 toast({
