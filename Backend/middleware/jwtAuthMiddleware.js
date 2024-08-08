@@ -6,6 +6,7 @@ import User from "../models/userModel.js";
 dotenv.config();
 
 export const jwtAuthMiddleware = asyncHandler(async (req, res, next) => {
+  
   const authorization = req.headers.authorization;
 
   if (!authorization) {

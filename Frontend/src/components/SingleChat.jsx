@@ -1,15 +1,94 @@
 
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { ChatContext } from '../Context/ChatProvider';
-import { Box, IconButton, Text } from '@chakra-ui/react';
+import { Box, FormControl, IconButton, Input, Spinner, Text, useToast } from '@chakra-ui/react';
 import { ArrowBackIcon } from '@chakra-ui/icons';
 import { getSender , getSenderFull } from '../utils/ChatLogics';
 import ProfileModal from './ProfileModal';
 import UpdateGroupChatmodal from './UpdateGroupChatmodal';
+import { BACKEND_URL } from '../utils/constant';
+import axios from 'axios';
+import ChatWindow from './ChatWindow';
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     const { user, selectedChat, setSelectedChat } = useContext(ChatContext);
+    const [message, setMessage] = useState([]);    
+    const [loading, setLoading] = useState(false);    
+    const [newMessage, setNewMessage] = useState();  
+    const toast = useToast();
+    
+    const fetchMessages = async () => {
+        if(!selectedChat) return;
+
+        setLoading(true);
+        try {
+            const res = await axios.get(`${BACKEND_URL}/api/message/${selectedChat._id}`, 
+                {
+                    withCredentials: true,
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": `Bearer ${user.token}`,
+                    },
+                })
+                const { data } = res;
+                console.log(message);
+                
+                setMessage(data);
+                setLoading(false);
+        } catch (error) {
+            toast({
+                title: 'Error Occured',
+                description:"Failed to send the Message",
+                status: 'success',
+                duration: 5000,
+                isClosable: true,
+                position: 'bottom'
+            })
+        }
+    }
+
+    useEffect( () => {
+        fetchMessages();
+    }, [selectedChat])
+
+    const sendMessage = async (e) => {
+        if(e.key === "Enter" && newMessage) {
+            try {
+                const res = await axios.post(`${BACKEND_URL}/api/message`, 
+                    {  
+                        content: newMessage, 
+                        chatId: selectedChat._id,
+                    },
+                    {
+                        withCredentials: true,
+                        headers: {
+                            "Content-Type": "application/json",
+                            "Authorization": `Bearer ${user.token}`,
+                        },
+                    })
+                    const { data } = res;
+                    console.log(data);                 
+                    setNewMessage("");
+                    setMessage([...message, data])
+            } catch (error) {
+                toast({
+                    title: 'Error Occured',
+                    description:"Failed to send the Message",
+                    status: 'success',
+                    duration: 5000,
+                    isClosable: true,
+                    position: 'bottom'
+                })
+            }
+        }
+    }
+
+    const typingHandler = (e) => {
+        setNewMessage(e.target.value);
+
+        // typing indicator logic
+    }
 
     return (
         <>
@@ -42,6 +121,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             <UpdateGroupChatmodal
                             fetchAgain={fetchAgain}
                             setfetchAgain={setFetchAgain}
+                            fetchMessages={fetchMessages}
                             />
                             </>
                         )}
@@ -56,7 +136,30 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         h={"100%"}
                         borderRadius={"lg"}
                         overflowY={"hidden"}>
-                            {/* message here */}
+                            {
+                                loading ? (
+                                    <Spinner 
+                                    size={"xl"}
+                                    w={20}
+                                    h={20}
+                                    alignSelf={"center"}
+                                    margin={"auto"}/>
+                                ):
+                                 (
+                                    <div className='messages'>
+                                        <ChatWindow message={message} />
+                                    </div>
+                                 )
+                            }
+                            <FormControl
+                            onKeyDown={ sendMessage } isRequired mt={"3"}>
+                                <Input 
+                                variant={"filled"}
+                                bg={"#E0E0E0"}
+                                placeholder='Enter a message..'
+                                value={newMessage}
+                                onChange={typingHandler}/>
+                            </FormControl>
                             
                         </Box>
 

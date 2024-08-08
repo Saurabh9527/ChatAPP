@@ -6,6 +6,7 @@ import Chat from "../models/chatModel.js";
 export const sendMessage = asyncHandler(async (req, res) => {
   const { chatId, content } = req.body;
 
+
   if (!chatId || !content) {
     console.log("Invalid data passed into request");
     return res.sendStatus(400);
@@ -44,7 +45,7 @@ export const allMessages = asyncHandler (async (req, res) => {
     try {
         
         const messages = await Message.find( {chat: req.params.chatId } )
-        .populate("sender" , "name, avatar, email")
+        .populate("sender" , "name avatar email")
         .populate("chat");
 
         res.json(messages);

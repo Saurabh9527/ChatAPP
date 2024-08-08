@@ -24,7 +24,7 @@ import axios from 'axios'
 import { BACKEND_URL } from '../utils/constant'
 import UserListItem from './UserSearch/UserListItem'
 
-const UpdateGroupChatmodal = ({ fetchAgain, setfetchAgain }) => {
+const UpdateGroupChatmodal = ({ fetchAgain, setfetchAgain , fetchMessages }) => {
 
     const { isOpen, onOpen, onClose } = useDisclosure()
     const [groupChatName, setGroupChatName] = useState("");
@@ -67,6 +67,7 @@ const UpdateGroupChatmodal = ({ fetchAgain, setfetchAgain }) => {
                 const { data } = res;
                 user1._id === user.id ? setSelectedChat() : setSelectedChat(data);
                 setfetchAgain(!fetchAgain)
+                fetchMessages(); //after remove user again fetch message
                 setLoading(false);
         } catch (error) {
             toast({
