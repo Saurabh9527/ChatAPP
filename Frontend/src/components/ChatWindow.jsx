@@ -16,7 +16,7 @@ const ChatWindow = ({ message }) => {
             style={{ display: 'flex'}} 
             key={m._id}>
                 {
-                    (isSameSender(message, m, i, user._id)
+                    (isSameSender(message, m, i, user._id)  //Showing avtaar on user message 
                 || isLastMessage(message,i, user._id)
                 ) && (
                     <Tooltip label={m.sender.name} placement='bottom-start' hasArrow>
