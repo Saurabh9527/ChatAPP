@@ -9,6 +9,7 @@ import UpdateGroupChatmodal from './UpdateGroupChatmodal';
 import { BACKEND_URL } from '../utils/constant';
 import axios from 'axios';
 import ChatWindow from './ChatWindow';
+import io from 'socket.io-client';
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
@@ -83,6 +84,10 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             }
         }
     }
+
+    useEffect(() => {
+        const socket = io(BACKEND_URL);
+    }, []);
 
     const typingHandler = (e) => {
         setNewMessage(e.target.value);
