@@ -10,13 +10,15 @@ import { BACKEND_URL } from '../utils/constant';
 import axios from 'axios';
 import ChatWindow from './ChatWindow';
 import io from 'socket.io-client';
+var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
     const { user, selectedChat, setSelectedChat } = useContext(ChatContext);
     const [message, setMessage] = useState([]);    
     const [loading, setLoading] = useState(false);    
-    const [newMessage, setNewMessage] = useState();  
+    const [newMessage, setNewMessage] = useState('');  
+    const [socketConnected, setSocketConnected] = useState(false);  
     const toast = useToast();
     
     const fetchMessages = async () => {
@@ -33,10 +35,11 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                     },
                 })
                 const { data } = res;
-                console.log(message);
+               // console.log(message);
                 
                 setMessage(data);
                 setLoading(false);
+                socket.emit('join chat', selectedChat._id);
         } catch (error) {
             toast({
                 title: 'Error Occured',
@@ -48,10 +51,6 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             })
         }
     }
-
-    useEffect( () => {
-        fetchMessages();
-    }, [selectedChat])
 
     const sendMessage = async (e) => {
         if(e.key === "Enter" && newMessage) {
@@ -69,7 +68,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                         },
                     })
                     const { data } = res;
-                    console.log(data);                 
+                   // console.log(data);
+                    socket.emit("new message", data);                 
                     setNewMessage("");
                     setMessage([...message, data])
             } catch (error) {
@@ -85,15 +85,42 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         }
     }
 
-    useEffect(() => {
-        const socket = io(BACKEND_URL);
-    }, []);
-
     const typingHandler = (e) => {
         setNewMessage(e.target.value);
 
         // typing indicator logic
     }
+
+    useEffect(() => {
+        socket = io(BACKEND_URL);
+        socket.emit("setup", user);
+        socket.on("connected", () =>(
+            setSocketConnected(true)
+        ));
+    }, []);
+
+    useEffect( () => {
+       // console.log("FEtch Message");
+        
+        fetchMessages();
+        selectedChatCompare = selectedChat;
+    }, [selectedChat])
+
+
+
+    useEffect(() => {
+         socket.on("message received", (newMessageReceived) => {
+            //console.log(newMessageReceived);
+            
+            if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived._id){
+                //New Notification logic
+            }else{
+                setMessage([...message, newMessageReceived]);
+            }
+        })
+    })
+    
+
 
     return (
         <>
