@@ -10,13 +10,12 @@ import { BACKEND_URL } from '../utils/constant';
 import axios from 'axios';
 import ChatWindow from './ChatWindow';
 import io from 'socket.io-client';
-import  {  } from 'lottie-react'
 import './style.css'
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
-    const { user, selectedChat, setSelectedChat } = useContext(ChatContext);
+    const { user, selectedChat, setSelectedChat, notification, setNotification } = useContext(ChatContext);
     const [message, setMessage] = useState([]);    
     const [loading, setLoading] = useState(false);    
     const [newMessage, setNewMessage] = useState('');  
@@ -135,13 +134,13 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
     useEffect(() => {
-         socket.on("message received", (newMessageReceived) => {
-            //console.log(newMessageReceived);
-            // console.log("SelectChatCOmpare  "+ selectedChatCompare);
-            // console.log("newMessageRecevied  "+newMessageReceived);
-            
+         socket.on("message received", (newMessageReceived) => {            
             if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id){
-                //New Notification logic
+                if(!notification.includes(newMessageReceived)){
+                    setNotification([newMessageReceived, ...notification]);
+                    setFetchAgain(!fetchAgain);
+                }
+
             }else{
                 setMessage([...message, newMessageReceived]);
             }
@@ -214,7 +213,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                             <FormControl
                             onKeyDown={ sendMessage } isRequired mt={"3"}>
                             
-                                {isTyping?  <div>loading...</div>: <></>}
+                                {isTyping?  <div>typing..</div>: <></>}
                                 <Input 
                                 variant={"filled"}
                                 bg={"#E0E0E0"}

@@ -1,5 +1,5 @@
 
-import { Avatar, Box, Button, Menu, MenuButton, Text, Tooltip, MenuList, MenuItem, MenuDivider, Drawer, DrawerContent, DrawerHeader, DrawerOverlay, DrawerBody, Input, useToast, Spinner } from '@chakra-ui/react';
+import { Avatar, Box, Button, Menu, MenuButton, Text, Tooltip, MenuList, MenuItem, MenuDivider, Drawer, DrawerContent, DrawerHeader, DrawerOverlay, DrawerBody, Input, useToast, Spinner, Badge } from '@chakra-ui/react';
 import React, { useContext, useState } from 'react';
 import { FaSearch } from "react-icons/fa";
 import { BellIcon, ChevronDownIcon } from '@chakra-ui/icons'
@@ -11,6 +11,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '../utils/constant';
 import ChatLoading from './ChatLoading';
 import UserListItem from './UserSearch/UserListItem';
+import { getSender } from '../utils/ChatLogics';
 
 const ChatDrawer = () => {
 
@@ -18,7 +19,7 @@ const ChatDrawer = () => {
   const [searchResult, setSearchResult] = useState([]);
   const [loading, setLoading] = useState(false);
   const [loadingChat, setLoadingChat] = useState(false)
-  const { user, setSelectedChat, chats, setChats } = useContext(ChatContext);
+  const { user, setSelectedChat, chats, setChats, notification, setNotification } = useContext(ChatContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
   //console.log(user);
   const navigate = useNavigate();
@@ -30,8 +31,8 @@ const ChatDrawer = () => {
   }
 
   const handleSearch = async () => {
-    
-    if(!search){
+
+    if (!search) {
       toast({
         title: 'Please enter something in search',
         status: 'warning',
@@ -43,19 +44,19 @@ const ChatDrawer = () => {
 
     try {
       setLoading(true);
-        const res = await axios.get(`${BACKEND_URL}/api/user?search=${search}`,
-          {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${user.token}`,
-            },
-          });
+      const res = await axios.get(`${BACKEND_URL}/api/user?search=${search}`,
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user.token}`,
+          },
+        });
 
-          const { data } = res;
-          setLoading(false);
-          setSearchResult(data);
-          
+      const { data } = res;
+      setLoading(false);
+      setSearchResult(data);
+
     } catch (error) {
       toast({
         title: 'Error Occured!',
@@ -68,25 +69,25 @@ const ChatDrawer = () => {
     }
   }
 
-  const accessChat = async ( userId ) => {
+  const accessChat = async (userId) => {
 
     try {
-        setLoadingChat(true);
-        const res = await axios.post(`${BACKEND_URL}/api/chat`, {userId},
-          {
-            withCredentials: true,
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${user.token}`,
-            },
-          });
-          const { data } = res;
-          console.log(res); 
-          if(!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
+      setLoadingChat(true);
+      const res = await axios.post(`${BACKEND_URL}/api/chat`, { userId },
+        {
+          withCredentials: true,
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${user.token}`,
+          },
+        });
+      const { data } = res;
+      console.log(res);
+      if (!chats.find((c) => c._id === data._id)) setChats([data, ...chats]);
 
-          setSelectedChat(data)
-          setLoadingChat(false);
-          onClose();
+      setSelectedChat(data)
+      setLoadingChat(false);
+      onClose();
     } catch (error) {
       toast({
         title: 'Error fetching the chat',
@@ -131,7 +132,45 @@ const ChatDrawer = () => {
           <Menu>
             <MenuButton p={"1"}>
               <BellIcon fontSize={"2xl"} m={"1"} />
+              {notification.length > 0 && (
+                <Badge
+                  position="absolute"
+                  top="5px"
+                  right="104px"
+                  colorScheme="red"
+                  borderRadius="full"
+                  px="1"
+                  py="0.5"
+                  width="20px"
+                  height="25px"
+                  fontSize="sm"
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  variant="solid"
+                >
+                  {notification.length}
+                </Badge>
+              )}
             </MenuButton>
+            <MenuList
+              p={"2"}
+              marginRight={"3"}
+            >
+              {!notification && "No New Message"}
+              {notification.map((notify) => (
+                <MenuItem
+                  key={notify._id}
+                  onClick={() => {
+                    setSelectedChat(notify.chat);
+                    setNotification(notification.filter((n) => n !== notify))
+                  }}>
+                  {notify.chat.isGroupChat
+                    ? `New Message in ${notify.chat.chatName}`
+                    : `New Message from ${getSender(user, notify.chat.users)}`}
+                </MenuItem>
+              ))}
+            </MenuList>
           </Menu>
 
           <Menu>
@@ -161,32 +200,32 @@ const ChatDrawer = () => {
         onClose={onClose}>
         <DrawerOverlay />
         <DrawerContent>
-        <DrawerHeader>
-          Search users
-        </DrawerHeader>
-        <DrawerBody>
-          <Box display={"flex"} pb={"2"}>
-            <Input
-            placeholder='Search by name or email'
-            mr={'2'}
-            value={search}
-            onChange={(e)=> setSearch(e.target.value)}/>
-            <Button onClick={handleSearch}>Go</Button>
-          </Box>
+          <DrawerHeader>
+            Search users
+          </DrawerHeader>
+          <DrawerBody>
+            <Box display={"flex"} pb={"2"}>
+              <Input
+                placeholder='Search by name or email'
+                mr={'2'}
+                value={search}
+                onChange={(e) => setSearch(e.target.value)} />
+              <Button onClick={handleSearch}>Go</Button>
+            </Box>
 
-          { loading  ? (
-            <ChatLoading />
-          ): (
-            searchResult?.map(( user ) => (
-              <UserListItem
-              key={user._id}
-              user={user}
-              handleFunction= {()=>accessChat(user._id)}
-              />
-            ))
-          )}
-          { loadingChat && <Spinner ml={"auto"} display={"flex"}/>}
-        </DrawerBody>
+            {loading ? (
+              <ChatLoading />
+            ) : (
+              searchResult?.map((user) => (
+                <UserListItem
+                  key={user._id}
+                  user={user}
+                  handleFunction={() => accessChat(user._id)}
+                />
+              ))
+            )}
+            {loadingChat && <Spinner ml={"auto"} display={"flex"} />}
+          </DrawerBody>
         </DrawerContent>
       </Drawer>
     </>

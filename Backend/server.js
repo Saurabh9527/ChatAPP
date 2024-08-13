@@ -82,6 +82,12 @@ io.on("connection", (socket) => {
     });
   });
 
+  //clean up socket
+  socket.off("setup", () => {
+    console.log("USER DISCONNECTED");
+    socket.leave(userData._id)
+  });
+
 });
 
 server.listen(port, (req, res) => {
