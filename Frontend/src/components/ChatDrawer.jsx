@@ -158,6 +158,7 @@ const ChatDrawer = () => {
               marginRight={"3"}
             >
               {!notification && "No New Message"}
+              //TODO: save notification message in database 
               {notification.map((notify) => (
                 <MenuItem
                   key={notify._id}

@@ -10,12 +10,13 @@ import { Button, Modal,
     FormControl,
     Input,
     Box,} from '@chakra-ui/react'
-import React, { useContext, useState } from 'react'
+import React, { useContext, useMemo, useState } from 'react'
 import { ChatContext } from '../Context/ChatProvider'
 import axios from 'axios'
 import { BACKEND_URL } from '../utils/constant'
 import UserListItem from './UserSearch/UserListItem'
 import UserBadgeItem from './UserSearch/UserBadgeItem'
+import { debounce } from '../utils/debounce'
 
 const GroupChatModal = ( {children} ) => {
 
@@ -28,16 +29,15 @@ const GroupChatModal = ( {children} ) => {
     const toast = useToast();
     const { user, chats, setChats } = useContext(ChatContext);
 
-    const handleSearch = async ( query ) => {
-        
-        setSearch(query);
+    const fetchUser = async  ( query ) => {
+        //setSearch(query);
         if(!query){
             return;
         }
  
         try {
             setLoading(true);
-            const res = await axios.get(`${BACKEND_URL}/api/user?search=${search}`,
+            const res = await axios.get(`${BACKEND_URL}/api/user?search=${query}`,
                 {
                   withCredentials: true,
                   headers: {
@@ -46,7 +46,7 @@ const GroupChatModal = ( {children} ) => {
                   },
                 });
                 const { data } = res;
-                console.log(data);         
+                //console.log(data);         
                 setLoading(false);
                 setSearchResult(data);
         } catch (error) {
@@ -62,6 +62,11 @@ const GroupChatModal = ( {children} ) => {
               })
         }
     }
+
+    const handleSearch = useMemo(() => debounce((e) =>{
+        fetchUser(e.target.value)  
+    }, 1000),[]);
+
 
     const handleSubmit = async () => {
         if(!groupChatName  || !selectedUser ){
@@ -90,7 +95,7 @@ const GroupChatModal = ( {children} ) => {
                 });
 
                 const { data } = res; 
-                console.log(res);    
+                //console.log(res);    
                 setChats([data, ...chats]);
                 onClose()
                 toast({
@@ -157,7 +162,10 @@ const GroupChatModal = ( {children} ) => {
                         <Input 
                         placeholder='Add user eg: Alex, Bob' 
                         mb={"1"}
-                        onChange={(e)=> handleSearch(e.target.value)}/>
+                        onChange={(e)=>{
+                            setSearch(e.target.value)
+                            handleSearch(e)
+                        }}/>
                     </FormControl>
                     <Box w={"100%"} display={"flex"} flexWrap={"wrap"}>
                     {selectedUser.map((user)=>(

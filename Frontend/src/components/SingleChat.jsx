@@ -134,7 +134,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
 
     useEffect(() => {
-         socket.on("message received", (newMessageReceived) => {            
+         socket.on("message received", (newMessageReceived) => { 
+            //TODO: save notification message in database           
             if(!selectedChatCompare || selectedChatCompare._id !== newMessageReceived.chat._id){
                 if(!notification.includes(newMessageReceived)){
                     setNotification([newMessageReceived, ...notification]);
