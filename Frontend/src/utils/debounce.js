@@ -1,6 +1,4 @@
 
-
-
 export const debounce = (cl, delay) => {
     let timerId;
     return (...args)=>{

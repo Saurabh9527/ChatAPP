@@ -3,6 +3,7 @@ import React, { useMemo } from 'react'
 import axios from 'axios'
 import { BACKEND_URL } from '../utils/constant';
 import { debounce } from '../utils/debounce';
+import lodash from 'lodash';
 
 const useSearchUsers = ( user, setLoading, setSearchResult ) => {
     const fetchUser = async  ( query ) => {
@@ -39,9 +40,13 @@ const useSearchUsers = ( user, setLoading, setSearchResult ) => {
         }
     }
 
-    const handleSearch = useMemo(() => debounce((e) =>{
-        fetchUser(e.target.value)  
-    }, 1000),[]);
+    const handleSearch = useMemo(() => 
+        lodash.debounce(( e ) => {
+            fetchUser(e.target.value)
+        }, 500),[]);
+    // const handleSearch = useMemo(() => debounce((e) =>{
+    //     fetchUser(e.target.value)  
+    // }, 1000),[]);
 
     return handleSearch;
 }

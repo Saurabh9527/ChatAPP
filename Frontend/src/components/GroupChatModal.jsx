@@ -31,7 +31,6 @@ const GroupChatModal = ( {children} ) => {
     const toast = useToast();
     const { user, chats, setChats } = useContext(ChatContext);
 
-
     const handleSearch = useSearchUsers(user, setLoading, setSearchResult);
 
     const handleSubmit = async () => {
