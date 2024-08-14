@@ -17,6 +17,8 @@ import { BACKEND_URL } from '../utils/constant'
 import UserListItem from './UserSearch/UserListItem'
 import UserBadgeItem from './UserSearch/UserBadgeItem'
 import { debounce } from '../utils/debounce'
+import { useSearchParams } from 'react-router-dom'
+import useSearchUsers from '../Hooks/useSearchUsers'
 
 const GroupChatModal = ( {children} ) => {
 
@@ -29,44 +31,8 @@ const GroupChatModal = ( {children} ) => {
     const toast = useToast();
     const { user, chats, setChats } = useContext(ChatContext);
 
-    const fetchUser = async  ( query ) => {
-        //setSearch(query);
-        if(!query){
-            return;
-        }
- 
-        try {
-            setLoading(true);
-            const res = await axios.get(`${BACKEND_URL}/api/user?search=${query}`,
-                {
-                  withCredentials: true,
-                  headers: {
-                      "Content-Type": "application/json",
-                      "Authorization": `Bearer ${user.token}`,
-                  },
-                });
-                const { data } = res;
-                //console.log(data);         
-                setLoading(false);
-                setSearchResult(data);
-        } catch (error) {
-            console.log(error);
-            
-            toast({
-                title: 'Error Occured!',
-                description: "Failed to Load the Search Results",
-                status: 'error',
-                duration: 5000,
-                isClosable: true,
-                position: 'bottom-left'
-              })
-        }
-    }
 
-    const handleSearch = useMemo(() => debounce((e) =>{
-        fetchUser(e.target.value)  
-    }, 1000),[]);
-
+    const handleSearch = useSearchUsers(user, setLoading, setSearchResult);
 
     const handleSubmit = async () => {
         if(!groupChatName  || !selectedUser ){
