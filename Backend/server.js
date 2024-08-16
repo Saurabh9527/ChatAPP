@@ -17,7 +17,7 @@ dotenv.config();
 app.use(bodyParser.json());
 
 const corsOptions = {
-  origin: "http://localhost:5173",
+  origin: process.env.FRONTEND_URL,
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   credentials: true,
 };
@@ -42,7 +42,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000, //wait for 60 second to determine if a client is still connected to the server save the bandwidth
   cors: {
-    origin: "http://localhost:5173",
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   },
 });
