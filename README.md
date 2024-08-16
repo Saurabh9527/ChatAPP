@@ -13,8 +13,7 @@
 * WebSocket 
 
 # API Endpoints
-
-# Authentication
+## Authentication
 
 * Sign Up
  - POST /signup: Sign up a user
