@@ -1,9 +1,8 @@
 import express from "express";
-import { chats } from "./Data/data.js";
+//import { chats } from "./Data/data.js";
 import dotenv from "dotenv";
 import cors from "cors";
 import bodyParser from "body-parser";
-import colors from "colors";
 import db from "./config/db.js";
 import userRoute from "./routes/userRoute.js";
 import chatRoute from "./routes/chatRoute.js";
@@ -11,15 +10,14 @@ import messageRoute from "./routes/messageRoute.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import { Server } from "socket.io";
 import http from "http";
-import { log } from "console";
 const app = express();
 dotenv.config();
 app.use(bodyParser.json());
 
 const corsOptions = {
   origin: "*",
-  // methods: ["GET","HEAD","PUT","PATCH","POST","DELETE"],
-  // credentials: true,
+  methods: ["GET","HEAD","PUT","PATCH","POST","DELETE"],
+  credentials: true,
 };
 
 app.use(cors(corsOptions));
@@ -42,7 +40,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   pingTimeout: 60000, //wait for 60 second to determine if a client is still connected to the server save the bandwidth
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: "*",
     credentials: true,
   },
 });
@@ -91,5 +89,5 @@ io.on("connection", (socket) => {
 });
 
 server.listen(port, (req, res) => {
-  console.log(`server listening on port ${port}`.yellow.bold);
+  console.log(`server listening on port ${port}`);
 });
