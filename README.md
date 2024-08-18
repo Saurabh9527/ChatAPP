@@ -90,3 +90,13 @@ A real-time messaging platform enabling seamless one-on-one and group chat funct
 - **GET** `/:chatId`
   - **Description**: Retrieve all messages from a specific chat, identified by `chatId`.
   - **Middleware**: Requires JWT authentication.
+
+ #### SCREENSHOT
+ ![Login1](https://github.com/user-attachments/assets/4edfa330-6f5d-4006-9768-98af390cd791)
+
+![signup1](https://github.com/user-attachments/assets/2cf9116d-7c8a-486f-b886-ef3f559623c1)
+
+![home12](https://github.com/user-attachments/assets/c8f1d329-2a30-42f9-9e5f-f3dbb064e8fa)
+
+![group1](https://github.com/user-attachments/assets/904910b8-caa1-44b8-98ed-ed8da67cecd9)
+
